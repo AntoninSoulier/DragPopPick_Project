@@ -51,7 +51,7 @@ public class MouseManager : MonoBehaviour
         foreach (var comp in components)
         {
             Vector3 iconeDelta = comp.transform.position - startPosition;
-            if (iconeDelta.sqrMagnitude < 0.1f)
+            if (iconeDelta.sqrMagnitude < 0.05f)
             {
                 return; // don't do tiny rotations.
             }
