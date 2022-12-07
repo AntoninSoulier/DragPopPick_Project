@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MouseManager : MonoBehaviour
+public class MouseDirection : MonoBehaviour
 {
     private Vector3 startPosition;
     private IconeScript[] components;
