@@ -14,6 +14,8 @@ public class DragNdrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
     public void OnBeginDrag(PointerEventData eventData)
     {
         Debug.Log("OnBeginDrag");
+        rectTransform.sizeDelta = new Vector2(45, 45);
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
