@@ -11,20 +11,27 @@ public class MouseDirection : MonoBehaviour
     private Vector3 startPosition;
     private IconeScript[] components;
     private Slot[] slots;
-    private List<IconeScript> selectedIcones = new List<IconeScript>();
-    private List<Vector3> initialPos = new List<Vector3>();
-
+    private Dictionary<IconeScript,Vector3> selectedIcones = new Dictionary<IconeScript,Vector3>();
+    private bool isSelected = false;
+    private Transform containerSlot;
     [SerializeField] private float epsAngle = 45;
-    
+    [SerializeField] private Vector3 offsetSlots = Vector3.zero;
+    [SerializeField] private float minMap = 0;
+    [SerializeField] private float maxMap = 100;
+
     private void Awake()
     {
         components = FindObjectsOfType<IconeScript>();
         slots = FindObjectsOfType<Slot>();
+        if (!(slots.Length == 0))
+        {
+            containerSlot = slots[0].transform.parent;
+        }
     }
 
     private void Start()
     {
-        print("Slots: "+slots.Length);
+        //print("Slots: "+slots.Length);
         
     }
     
@@ -44,79 +51,121 @@ public class MouseDirection : MonoBehaviour
                 return; // don't do tiny rotations.
             }
             
-            float angle = Mathf.Atan2 (mouseDelta.y, mouseDelta.x) * Mathf.Rad2Deg;
-            if (angle<0) angle += 360;
+            float angleIcone = getAngle(mouseDelta);
              
             //Debug.Log (angle);
-            FindAllIcones(startPosition,angle);
+            FindAllIcones(startPosition,angleIcone);
 
-            transform.localEulerAngles = new Vector3 (transform.localEulerAngles.x,transform.localEulerAngles.y, angle);
+            transform.localEulerAngles = new Vector3 (transform.localEulerAngles.x,transform.localEulerAngles.y, angleIcone);
             
         }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isSelected = false;
+            foreach (IconeScript comp in selectedIcones.Keys)
+            {
+                comp.transform.position = selectedIcones[comp];
+            }
+            selectedIcones.Clear();
+        }
+        
+    }
+    
+    private float getAngle(Vector3 mouseDelta)
+    {
+        float angle = Mathf.Atan2 (mouseDelta.y, mouseDelta.x) * Mathf.Rad2Deg;
+        if (angle<0) angle += 360;
+        
+        return angle;
     }
 
     public void FindAllIcones(Vector3 startPosition, float angleMouse)
     {
         foreach (var comp in components)
         {
-
-            Vector3 iconeDelta = comp.transform.position - startPosition;
-            if (iconeDelta.sqrMagnitude < 0.1f)
+            Vector3 compPos = comp.transform.position;
+            if (selectedIcones.ContainsKey(comp))
+            {
+                compPos = selectedIcones[comp];
+            }
+            
+            Vector3 iconeDelta = compPos - startPosition;
+            
+            if (iconeDelta.sqrMagnitude < 0.05f)
             {
                 return; // don't do tiny rotations.
             }
-            float angleIcone = Mathf.Atan2 (iconeDelta.y, iconeDelta.x) * Mathf.Rad2Deg;
-            if (angleIcone<0) angleIcone += 360;
-            print(angleIcone);
-            if ((Math.Abs(angleMouse - angleIcone))%360 < epsAngle)
+
+            float angleIcone = getAngle(iconeDelta);
+            
+            if ((Math.Abs(angleMouse - angleIcone))%360 < (int) epsAngle)
             {
+                isSelected = true;
+                //moveSlots();
                 comp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
-                Debug.Log(comp.transform.position);
-                if (!selectedIcones.Contains(comp))
+                if (!selectedIcones.ContainsKey(comp))
                 {
-                    selectedIcones.Add(comp);
-                    initialPos.Add(comp.transform.position);
+                    selectedIcones.Add(comp,comp.transform.position);
+                    Vector3 mousepos = Input.mousePosition;
+                    Display(selectedIcones.Keys.ToList(),mousepos);
                 }
-                print(selectedIcones.Count);
-                
-                Vector3 mousepos = Input.mousePosition;
-                Display(selectedIcones,mousepos);
             }
             else
             {
-                //comp.transform.position = new Vector3(96, 422, 0);
-                //comp.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 50);
-                int index = -1;
-                for (int i = 0; i < selectedIcones.Count; i++)
+                //print("deselect");
+                if (selectedIcones.ContainsKey(comp))
                 {
-                    if (selectedIcones[i] == comp)
-                    {
-                        index = i;
-                    }    
-                }
-
-                if (index != -1)
-                {
-                    comp.transform.position = initialPos[index];
-                    initialPos.RemoveAt(index);
+                    comp.transform.position = selectedIcones[comp];
                     selectedIcones.Remove(comp);
                 }
+
+                if (selectedIcones.Count == 0)
+                {
+                    isSelected = false;
+                }
+                
             }
         }
     }
 
     public void Display(List<IconeScript> selectedIcones, Vector3 mousepos)
     {
+        /*
         for (int i = 0; i < selectedIcones.Count; i++)
         {
             Slot slot = slots[i];
-            print(slot.GameObject().name);
+            //print(slot.GameObject().name);
             float x = slot.GetComponent<RectTransform>().position.x;
             float y = slot.GetComponent<RectTransform>().position.y;
-            print("x: " + x + " y: " + y);
+            //print("x: " + x + " y: " + y);
             Vector3 test = new Vector3();
             test = slot.GetComponent<RectTransform>().anchoredPosition;
             selectedIcones[i].transform.position = slot.transform.position - test;
         }
+        */
+        for (int i = 0; i < selectedIcones.Count; i++)
+        {
+            Vector3 posItem = FindObjectOfType<DragNdrop>().transform.position;
+            float x = Remap(selectedIcones[i].transform.position.x, 0, Screen.width, minMap, maxMap);
+            float y = Remap(selectedIcones[i].transform.position.y, 0, Screen.height, minMap, maxMap);
+            print(x +" "+ y);
+            selectedIcones[i].transform.position = new Vector2(x+posItem.x,y+posItem.y);
+        }
+    }
+    /*
+    public void moveSlots()
+    {
+        if (containerSlot != null)
+        {
+            Vector3 posItem = FindObjectOfType<DragNdrop>().transform.position;
+            containerSlot.transform.position = posItem + offsetSlots;
+        }
+    }
+    */
+    
+    float Remap(float source, float sourceFrom, float sourceTo, float targetFrom, float targetTo)
+    {
+        return targetFrom + (source-sourceFrom)*(targetTo-targetFrom)/(sourceTo-sourceFrom);
     }
 }
