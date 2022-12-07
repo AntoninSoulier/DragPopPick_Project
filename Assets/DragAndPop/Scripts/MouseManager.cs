@@ -39,12 +39,12 @@ public class MouseManager : MonoBehaviour
         }
         if ((Input.GetMouseButtonUp(0)))
         {
-            notLeftClick();
             colorThem();
             if (selectedIcon != null)
             {
-                selectedIcon.Execute("pathFile");
+                selectedIcon.Execute(ItemSelected.FullPathItem);
             }
+            notLeftClick();
         }
     }
 

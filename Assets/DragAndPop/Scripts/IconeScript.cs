@@ -7,7 +7,6 @@ public class IconeScript : MonoBehaviour
 {
     [SerializeField] private MouseManager.ApplicationIcone appType;
     
-
     private string applicationPath;
     // Start is called before the first frame update
     void Start()
