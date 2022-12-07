@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -167,7 +167,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1675aea12d58e842a832e33d7a4dee9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  epsAngle: 45
+  epsAngle: 20
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  notCompatible: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &347349990
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036ab7d0a70574441b165edc5b3ebfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  appType: 0
 --- !u!114 &347349993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +242,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 0249816d73683f84c9c2e3671f626c2e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -562,6 +565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036ab7d0a70574441b165edc5b3ebfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  appType: 0
 --- !u!114 &1458300766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -651,6 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036ab7d0a70574441b165edc5b3ebfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  appType: 0
 --- !u!114 &1594512596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -740,6 +745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036ab7d0a70574441b165edc5b3ebfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  appType: 2
 --- !u!114 &1632308262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -760,7 +766,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 5e4a2fe2096c54543b79552eeefc7912, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

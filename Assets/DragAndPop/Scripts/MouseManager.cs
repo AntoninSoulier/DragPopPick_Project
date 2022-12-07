@@ -15,12 +15,11 @@ public class MouseManager : MonoBehaviour
     [SerializeField] private Color selectedColor = Color.green;
     [SerializeField] private Color notCompatible = Color.grey;
 
-
     public enum ApplicationIcone
     {
         Excel,
-        VisualStudioCode,
-        BlocNote,
+        VsCode,
+        NodePad,
         Word
     }
     
@@ -42,6 +41,10 @@ public class MouseManager : MonoBehaviour
         {
             notLeftClick();
             colorThem();
+            if (selectedIcon != null)
+            {
+                selectedIcon.Execute("pathFile");
+            }
         }
     }
 
@@ -93,13 +96,13 @@ public class MouseManager : MonoBehaviour
         foreach (var comp in components)
         {
 
-            Vector3 iconeDelta = comp.transform.position - startPosition;
-            if (iconeDelta.sqrMagnitude < 0.05f)
+            Vector3 mouseDelta = comp.transform.position - startPosition;
+            if (mouseDelta.sqrMagnitude < 0.05f)
             {
                 return; // don't do tiny rotations.
             }
-            float angleIcone = Mathf.Atan2 (iconeDelta.y, iconeDelta.x) * Mathf.Rad2Deg;
-            if (angleIcone<0) angleIcone += 360;
+
+            float angleIcone = getAngle(mouseDelta);
             print(angleIcone);
             if ((Math.Abs(angleMouse - angleIcone))%360 < epsAngle)
             {
@@ -115,19 +118,16 @@ public class MouseManager : MonoBehaviour
     {
         foreach (var comp in components)
         {
-            if (comp == null)
-            {
-                return;
-            }
             if(selectedIcon == comp)
             {
                 comp.GetComponent<Image>().color = selectedColor;
             }
             else
             {
+                comp.GetComponent<Image>().color = Color.white;
                 //comp.transform.position = new Vector3(96, 422, 0);
-                comp.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 50);
-                selectedIcones.Remove(comp);
+                //comp.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 50);
+                //selectedIcones.Remove(comp);
             }
         }
     }
