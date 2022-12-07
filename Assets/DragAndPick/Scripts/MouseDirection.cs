@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +10,23 @@ public class MouseDirection : MonoBehaviour
 {
     private Vector3 startPosition;
     private IconeScript[] components;
+    private Slot[] slots;
     private List<IconeScript> selectedIcones = new List<IconeScript>();
     [SerializeField] private float epsAngle = 45;
 
-    private void Start()
+
+    private void Awake()
     {
-        components = GameObject.FindObjectsOfType<IconeScript>();
-        print(components.Length);
+        components = FindObjectsOfType<IconeScript>();
+        slots = FindObjectsOfType<Slot>();
     }
 
+    private void Start()
+    {
+        print("Slots: "+slots.Length);
+        
+    }
+    
     void Update() {
          
         if (Input.GetMouseButtonDown(0))
@@ -41,6 +50,23 @@ public class MouseDirection : MonoBehaviour
             FindAllIcones(startPosition,angle);
 
             transform.localEulerAngles = new Vector3 (transform.localEulerAngles.x,transform.localEulerAngles.y, angle);
+            
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            for (int i = 0; i < components.Length; i++)
+            {
+                Slot slot = slots[i];
+                print(slot.GameObject().name);
+                float x = slot.GetComponent<RectTransform>().position.x;
+                float y = slot.GetComponent<RectTransform>().position.y;
+                print("x: " + x + " y: " + y);
+                Vector3 test = new Vector3();
+                test = slot.GetComponent<RectTransform>().anchoredPosition;
+                //Instantiate(slot,slot.GetComponent<RectTransform>().position - test,new Quaternion());
+                components[i].transform.position = slot.transform.position - test;
+            }
         }
     }
 
@@ -82,11 +108,14 @@ public class MouseDirection : MonoBehaviour
     public void Display(List<IconeScript> selectedIcones, Vector3 mousepos)
     {
         int offset = 50;
+
         
+        /*
         foreach (var icone in selectedIcones)
         {
             icone.transform.position = new Vector3(mousepos.x - offset, mousepos.y, 0);
             offset += 50;
         }
+        */
     }
 }
