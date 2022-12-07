@@ -12,9 +12,10 @@ public class MouseDirection : MonoBehaviour
     private IconeScript[] components;
     private Slot[] slots;
     private List<IconeScript> selectedIcones = new List<IconeScript>();
+    private List<Vector3> initialPos = new List<Vector3>();
+
     [SerializeField] private float epsAngle = 45;
-
-
+    
     private void Awake()
     {
         components = FindObjectsOfType<IconeScript>();
@@ -52,22 +53,6 @@ public class MouseDirection : MonoBehaviour
             transform.localEulerAngles = new Vector3 (transform.localEulerAngles.x,transform.localEulerAngles.y, angle);
             
         }
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            for (int i = 0; i < components.Length; i++)
-            {
-                Slot slot = slots[i];
-                print(slot.GameObject().name);
-                float x = slot.GetComponent<RectTransform>().position.x;
-                float y = slot.GetComponent<RectTransform>().position.y;
-                print("x: " + x + " y: " + y);
-                Vector3 test = new Vector3();
-                test = slot.GetComponent<RectTransform>().anchoredPosition;
-                //Instantiate(slot,slot.GetComponent<RectTransform>().position - test,new Quaternion());
-                components[i].transform.position = slot.transform.position - test;
-            }
-        }
     }
 
     public void FindAllIcones(Vector3 startPosition, float angleMouse)
@@ -90,6 +75,7 @@ public class MouseDirection : MonoBehaviour
                 if (!selectedIcones.Contains(comp))
                 {
                     selectedIcones.Add(comp);
+                    initialPos.Add(comp.transform.position);
                 }
                 print(selectedIcones.Count);
                 
@@ -99,23 +85,39 @@ public class MouseDirection : MonoBehaviour
             else
             {
                 //comp.transform.position = new Vector3(96, 422, 0);
-                comp.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 50);
-                selectedIcones.Remove(comp);
+                //comp.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 50);
+                int index = -1;
+                for (int i = 0; i < selectedIcones.Count; i++)
+                {
+                    if (selectedIcones[i] == comp)
+                    {
+                        index = i;
+                    }    
+                }
+
+                if (index != -1)
+                {
+                    comp.transform.position = initialPos[index];
+                    initialPos.RemoveAt(index);
+                    selectedIcones.Remove(comp);
+                }
+                
             }
         }
     }
 
     public void Display(List<IconeScript> selectedIcones, Vector3 mousepos)
     {
-        int offset = 50;
-
-        
-        /*
-        foreach (var icone in selectedIcones)
+        for (int i = 0; i < selectedIcones.Count; i++)
         {
-            icone.transform.position = new Vector3(mousepos.x - offset, mousepos.y, 0);
-            offset += 50;
+            Slot slot = slots[i];
+            print(slot.GameObject().name);
+            float x = slot.GetComponent<RectTransform>().position.x;
+            float y = slot.GetComponent<RectTransform>().position.y;
+            print("x: " + x + " y: " + y);
+            Vector3 test = new Vector3();
+            test = slot.GetComponent<RectTransform>().anchoredPosition;
+            selectedIcones[i].transform.position = slot.transform.position - test;
         }
-        */
     }
 }
