@@ -12,13 +12,21 @@ public class MouseDirection : MonoBehaviour
     private IconeScript[] components;
     private Slot[] slots;
     private Dictionary<IconeScript,Vector3> selectedIcones = new Dictionary<IconeScript,Vector3>();
-
+    private bool isSelected = false;
+    private Transform containerSlot;
     [SerializeField] private float epsAngle = 45;
-    
+    [SerializeField] private Vector3 offsetSlots = Vector3.zero;
+    [SerializeField] private float minMap = 0;
+    [SerializeField] private float maxMap = 100;
+
     private void Awake()
     {
         components = FindObjectsOfType<IconeScript>();
         slots = FindObjectsOfType<Slot>();
+        if (!(slots.Length == 0))
+        {
+            containerSlot = slots[0].transform.parent;
+        }
     }
 
     private void Start()
@@ -54,12 +62,14 @@ public class MouseDirection : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
+            isSelected = false;
             foreach (IconeScript comp in selectedIcones.Keys)
             {
                 comp.transform.position = selectedIcones[comp];
             }
             selectedIcones.Clear();
         }
+        
     }
     
     private float getAngle(Vector3 mouseDelta)
@@ -89,20 +99,17 @@ public class MouseDirection : MonoBehaviour
 
             float angleIcone = getAngle(iconeDelta);
             
-            print((Math.Abs(angleMouse - angleIcone))%360 < (int) epsAngle);
-
             if ((Math.Abs(angleMouse - angleIcone))%360 < (int) epsAngle)
             {
-                //print("select");
+                isSelected = true;
+                //moveSlots();
                 comp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
-                //Debug.Log(comp.transform.position);
                 if (!selectedIcones.ContainsKey(comp))
                 {
                     selectedIcones.Add(comp,comp.transform.position);
                     Vector3 mousepos = Input.mousePosition;
                     Display(selectedIcones.Keys.ToList(),mousepos);
                 }
-                //print(selectedIcones.Count);
             }
             else
             {
@@ -112,6 +119,11 @@ public class MouseDirection : MonoBehaviour
                     comp.transform.position = selectedIcones[comp];
                     selectedIcones.Remove(comp);
                 }
+
+                if (selectedIcones.Count == 0)
+                {
+                    isSelected = false;
+                }
                 
             }
         }
@@ -119,6 +131,7 @@ public class MouseDirection : MonoBehaviour
 
     public void Display(List<IconeScript> selectedIcones, Vector3 mousepos)
     {
+        /*
         for (int i = 0; i < selectedIcones.Count; i++)
         {
             Slot slot = slots[i];
@@ -130,5 +143,29 @@ public class MouseDirection : MonoBehaviour
             test = slot.GetComponent<RectTransform>().anchoredPosition;
             selectedIcones[i].transform.position = slot.transform.position - test;
         }
+        */
+        for (int i = 0; i < selectedIcones.Count; i++)
+        {
+            Vector3 posItem = FindObjectOfType<DragNdrop>().transform.position;
+            float x = Remap(selectedIcones[i].transform.position.x, 0, Screen.width, minMap, maxMap);
+            float y = Remap(selectedIcones[i].transform.position.y, 0, Screen.height, minMap, maxMap);
+            print(x +" "+ y);
+            selectedIcones[i].transform.position = new Vector2(x+posItem.x,y+posItem.y);
+        }
+    }
+    /*
+    public void moveSlots()
+    {
+        if (containerSlot != null)
+        {
+            Vector3 posItem = FindObjectOfType<DragNdrop>().transform.position;
+            containerSlot.transform.position = posItem + offsetSlots;
+        }
+    }
+    */
+    
+    float Remap(float source, float sourceFrom, float sourceTo, float targetFrom, float targetTo)
+    {
+        return targetFrom + (source-sourceFrom)*(targetTo-targetFrom)/(sourceTo-sourceFrom);
     }
 }
