@@ -101,7 +101,6 @@ public class MouseDirection : MonoBehaviour
                     initialPos.RemoveAt(index);
                     selectedIcones.Remove(comp);
                 }
-                
             }
         }
     }
