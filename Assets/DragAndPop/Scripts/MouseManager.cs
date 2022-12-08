@@ -26,6 +26,7 @@ public class MouseManager : MonoBehaviour
     private void Start()
     {
         components = FindObjectsOfType<IconeScript>();
+        print(components.Length);
     }
 
     void Update()

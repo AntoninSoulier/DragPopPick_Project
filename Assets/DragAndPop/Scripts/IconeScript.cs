@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class IconeScript : MonoBehaviour
+public class IconeScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private MouseManager.ApplicationIcone appType;
     
@@ -27,6 +29,11 @@ public class IconeScript : MonoBehaviour
                 break;
 
         }
+    public Vector2 baseAnchor;
+    // Start is called before the first frame update
+    void Start()
+    {
+        baseAnchor = GetComponent<RectTransform>().anchoredPosition;
     }
 
     // Update is called once per frame
@@ -41,5 +48,14 @@ public class IconeScript : MonoBehaviour
         process.WaitForExit();
         process.Close();
 
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        MouseDirection.hovered = this;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        MouseDirection.hovered = null;
     }
 }
