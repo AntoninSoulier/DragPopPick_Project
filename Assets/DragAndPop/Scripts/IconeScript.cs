@@ -7,9 +7,12 @@ using UnityEngine.EventSystems;
 
 public class IconeScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private MouseManager.ApplicationIcone appType;
+    [SerializeField] public MouseManager.ApplicationIcone appType;
     
     private string applicationPath;
+    // Start is called before the first frame update
+
+    public Vector2 baseAnchor;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,12 +30,13 @@ public class IconeScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             case MouseManager.ApplicationIcone.VsCode:
                 applicationPath = ListPathApplication.vscodePath;
                 break;
-
+            case MouseManager.ApplicationIcone.Steam:
+                applicationPath = ListPathApplication.steamPath;
+                break;
+            case MouseManager.ApplicationIcone.Calculatrice:
+                applicationPath = ListPathApplication.teamsPath;
+                break;
         }
-    public Vector2 baseAnchor;
-    // Start is called before the first frame update
-    void Start()
-    {
         baseAnchor = GetComponent<RectTransform>().anchoredPosition;
     }
 
@@ -48,14 +52,17 @@ public class IconeScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         process.WaitForExit();
         process.Close();
 
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         MouseDirection.hovered = this;
+        MouseManager.hovered = this;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         MouseDirection.hovered = null;
+        MouseManager.hovered = null;
     }
 }

@@ -82,43 +82,39 @@ public class MouseDirection : MonoBehaviour
             }
 
             selectedIcones.Clear();
-            print("ui");
-            print(IsPointerOverUIObject());
             if (hovered != null)
             {
-                print("ok");
-                DragNdrop item = FindObjectOfType<DragNdrop>();
-                int x = 0;
-                int y = 0;
-                if (hovered.baseAnchor.x<0)
+                if (DragNdrop.isDragged)
                 {
-                    x = 50;
+                    
+                    DragNdrop item = FindObjectOfType<DragNdrop>();
+                    int x = 0;
+                    int y = 0;
+                    if (hovered.baseAnchor.x<0)
+                    {
+                        x = 50;
+                    }
+                    else
+                    {
+                        x = -50;
+                    }
+                    if (hovered.baseAnchor.y<0)
+                    {
+                        y = 50;
+                    }
+                    else
+                    {
+                        y = -50;
+                    }
+                    item.transform.position = hovered.transform.position+ new Vector3(x,y);
                 }
-                else
-                {
-                    x = -50;
-                }
-                if (hovered.baseAnchor.y<0)
-                {
-                    y = 50;
-                }
-                else
-                {
-                    y = -50;
-                }
-                item.transform.position = hovered.transform.position+ new Vector3(x,y);
+                hovered.Execute("");
+
             }
 
+            DragNdrop.isDragged = false;
         }
 
-    }
-    public static bool IsPointerOverUIObject()
-    {
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-        return results.Count > 0;
     }
 
     private float getAngle(Vector3 mouseDelta)
@@ -181,23 +177,6 @@ public class MouseDirection : MonoBehaviour
         }
     }
 
-    private void resetIcons()
-    {
-        foreach (var comp in components)
-        {
-            if (selectedIcones.ContainsKey(comp))
-            {
-                comp.transform.position = selectedIcones[comp];
-                selectedIcones.Remove(comp);
-            }
-
-            if (selectedIcones.Count == 0)
-            {
-                isSelected = false;
-            }
-        }
-    }
-
     public void Display(IconeScript icone, Vector3 mousepos)
     {
         /*
@@ -251,10 +230,5 @@ public class MouseDirection : MonoBehaviour
         icone.transform.position =  itemPos+new Vector2(x,y); //+posItem.x/2,y+posItem.y/2);
 
     }
-    
-    float Remap(float source, float sourceFrom, float sourceTo, float targetFrom, float targetTo)
-    {
-        return targetFrom + (source-sourceFrom)*(targetTo-targetFrom)/(sourceTo-sourceFrom);
-    }
-    
+
 }
