@@ -11,10 +11,10 @@ public class MouseManager : MonoBehaviour
     private IconeScript[] components;
     private List<IconeScript> selectedIcones = new List<IconeScript>();
     [SerializeField] private float epsAngle = 45;
-
+    
     private void Start()
     {
-        components = GameObject.FindObjectsOfType<IconeScript>();
+        components = FindObjectsOfType<IconeScript>();
         print(components.Length);
     }
 
